@@ -2,92 +2,53 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Instagram;
+use App\Follower;
 use Illuminate\Console\Command;
-
-function __die($msg){
-    die("{$msg}\n");
-}
+use Illuminate\Support\Facades\DB;
 
 class followers extends Command
 {
-
-    protected $signature = 'insta:run';
-    protected $description = 'update instagram followers';
-
-    private $client;
-    private $jar;
-
-    private $username;
-    private $password;
-    private $userid;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->client = new \GuzzleHttp\Client();
-        $this->jar = new \GuzzleHttp\Cookie\CookieJar;
-
-        $this->username = 'svfnix';
-        $this->password = base64_decode('YHMsdm5saw==');
-        $this->userid = '485981610';
-    }
-
-    public function getCsrfToken(){
-
-        $response = $this->client->request('GET', 'https://www.instagram.com/', [
-            'cookies' => $this->jar
-        ]);
-        preg_match('/\"csrf_token\"\: "([a-zA-Z0-9\-\_]+)\"/Si', $response->getBody(), $matchs);
-
-        return $matchs[1];
-    }
-
-    public function query($path, $args){
-        return $this->client->request('POST', $path, [
-            'headers' => [
-                'User-Agent' => 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0',
-                'X-CSRFToken' => $this->getCsrfToken(),
-                'X-Instagram-AJAX' => '1',
-                'X-Requested-With' => 'XMLHttpRequest',
-                'Referer' => 'https://www.instagram.com/'
-            ],
-            'cookies' => $this->jar,
-            'form_params' => $args
-        ]);
-    }
-
-    public function login(){
-        return $this->query(
-            'https://www.instagram.com/accounts/login/ajax/', [
-                'username' => $this->username,
-                'password' => $this->password,
-            ])->getBody();
-    }
-
-    public function getFollowers($userid){
-        return $this->query(
-            'https://www.instagram.com/query/', [
-            'q' => 'ig_user('. $userid .'){followed_by.first(10){count,page_info{end_cursor,has_next_page},nodes{id,is_verified,followed_by_viewer,requested_by_viewer,full_name,profile_pic_url,username}}}',
-        ])->getBody();
-    }
-
-    public function getFollowing($userid){
-        return $this->query(
-            'https://www.instagram.com/query/', [
-            'q' => 'ig_user('. $userid .'){follows.first(10){count,page_info{end_cursor,has_next_page},nodes{id,is_verified,followed_by_viewer,requested_by_viewer,full_name,profile_pic_url,username}}}',
-        ])->getBody();
-    }
-
+    protected $signature = 'insta:followers';
+    protected $description = 'update followers list';
 
     public function handle()
     {
-        $response = json_decode($this->login());
+        $instagram = new Instagram();
+        $response = json_decode($instagram->login());
         if(!$response || !$response->authenticated){
-            __die('Login Failed!');
+            $this->error('Login Failed!');
         }
 
-        $response = json_decode($this->getFollowers($this->userid));
-        file_put_contents('result', print_r($response, 1));
-        print_r($response);
+        $count = 1;
+        $page = 1;
+
+        $this->info('Clear followers list');
+        DB::table('followers')->truncate();
+
+        $this->info('start retrieving followers');
+        $response = json_decode($instagram->getFollowers($instagram->userid));
+        while($response && $response->status == 'ok'){
+
+            foreach($response->followed_by->nodes as $node){
+                $follower = new Follower();
+                $follower->id = $node->id;
+                $follower->username = $node->username;
+                $follower->created_at = new \DateTime();
+                $follower->save();
+
+                $this->info('Follower updated : '. $node->id .' ['. $node->username .': '. $node->full_name .']');
+                $count++;
+            }
+
+            if(empty($response->followed_by->page_info->end_cursor)) {
+                break;
+            }
+
+            $this->info('retrieving followers - page '. ($page++) . ' of '. floor($response->followed_by->count / $instagram->page_count));
+            $response = json_decode($instagram->getFollowers($instagram->userid, $response->followed_by->page_info->end_cursor));
+        }
+
+        $this->info($count . ' follower updated.');
     }
 }
