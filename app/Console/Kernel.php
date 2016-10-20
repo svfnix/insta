@@ -8,6 +8,7 @@ use App\Console\Commands\fetch;
 use App\Console\Commands\flag_followers;
 use App\Console\Commands\followers;
 use App\Console\Commands\follows;
+use App\Console\Commands\like;
 use App\Console\Commands\send_request;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -26,7 +27,8 @@ class Kernel extends ConsoleKernel
         crawl::class,
         flag_followers::class,
         send_request::class,
-        clean::class
+        clean::class,
+        like::class
     ];
 
     /**
@@ -37,8 +39,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('insta:crawl')->hourly();
+        $schedule->command('insta:send_request')->everyMinute();
+        $schedule->command('insta:clean')->everyTenMinutes();
     }
 
     /**

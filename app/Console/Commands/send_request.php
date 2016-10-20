@@ -21,7 +21,7 @@ class send_request extends Command
             $this->error('Login Failed!');
         }
 
-        $queues = DB::table('queues')->whereNull('followed_at')->limit(10)->get();
+        $queues = DB::table('queues')->whereNull('followed_at')->limit(2)->get();
         foreach($queues as $queue){
             $this->info('Follow user : ' . $queue->id .' ['. $queue->username .']');
             DB::table('queues')->where('id',  $queue->id)->update(['followed_at' => new \DateTime()]);

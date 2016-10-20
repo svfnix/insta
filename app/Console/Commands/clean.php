@@ -23,11 +23,11 @@ class clean extends Command
         }
 
         $follows = DB::table('queues')
-                        ->whereDate('created_at', '<=', Carbon::create()->subDays(7))
+                        ->whereDate('created_at', '<=', Carbon::create()->subHours(24))
                         ->whereNotNull('followed_at')
                         ->whereNull('unfollowed_at')
                         ->orderBy('last_check_at', 'asc')
-                        ->limit(10)
+                        ->limit(20)
                         ->get();
 
         foreach($follows as $follow){
