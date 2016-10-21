@@ -1,6 +1,8 @@
 <?php
 namespace App\Console;
 
+use GuzzleHttp\Cookie\FileCookieJar;
+
 class Instagram {
 
     public $data;
@@ -16,11 +18,13 @@ class Instagram {
     public function __construct()
     {
         $this->client = new \GuzzleHttp\Client();
-        $this->jar = new \GuzzleHttp\Cookie\CookieJar();
+        //$this->jar = new \GuzzleHttp\Cookie\CookieJar();
+        $this->jar = new FileCookieJar('storage/svfnix.jar');
 
-        $this->username = 'svfnix';
-        $this->password = base64_decode('YHMsdm5saw==');
-        $this->userid = '485981610';
+        $this->username = env('INSTA_USERNAME', null);
+        $this->password = env('INSTA_PASSWORD', null);
+        $this->userid = env('INSTA_USERID', null);
+
     }
 
     public function route($path=null){
@@ -54,7 +58,7 @@ class Instagram {
         return $this->data->entry_data->ProfilePage[0]->user->id;
     }
 
-    public function query($path, $args=[]){
+    public function query($path, $args=[], $method='POST'){
 
         if(!is_array($args)){
             $args = [];
@@ -72,7 +76,7 @@ class Instagram {
             'X-Requested-With' => 'XMLHttpRequest',
             'Referer' => 'https://www.instagram.com/'
         ];
-        return $this->client->request('POST', $path, $args);
+        return $this->client->request($method, $path, $args);
     }
 
     public function login(){
@@ -96,6 +100,22 @@ class Instagram {
 
     public function unfollow($id){
         return $this->query($this->route("/web/friendships/{$id}/unfollow/"));
+    }
+
+    public function like($id){
+        return $this->query($this->route("/web/likes/{$id}/like/"));
+    }
+
+    public function unlike($id){
+        return $this->query($this->route("/web/likes/{$id}/unlike/"));
+    }
+
+    public function accept($id){
+        return $this->query($this->route("/web/friendships/{$id}/approve/"));
+    }
+
+    public function reject($id){
+        return $this->query($this->route("/web/friendships/{$id}/ignore/"));
     }
 
     public function getFollowers($userid, $after=null){
@@ -124,6 +144,15 @@ class Instagram {
             $this->route("/query/"), [
             'q' => 'ig_user('. $userid .'){follows.'. $page_tpl .'{count,page_info{end_cursor,has_next_page},nodes{id,is_verified,followed_by_viewer,requested_by_viewer,full_name,profile_pic_url,username}}}',
         ])->getBody();
+    }
+
+    public function getUpdates(){
+
+        $this->fetch(
+            $this->route()
+        );
+
+        return $this->data->entry_data->FeedPage[0]->feed->media->nodes;
     }
 
 }

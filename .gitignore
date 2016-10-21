@@ -1,7 +1,9 @@
 /node_modules
 /public/storage
+/storage/logs/laravel.log
+/storage/roboolike.jar
+/storage/svfnix.jar
 /vendor
 /.idea
-Homestead.json
-Homestead.yaml
 .env
+cron

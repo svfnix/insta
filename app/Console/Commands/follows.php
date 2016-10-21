@@ -29,6 +29,8 @@ class follows extends Command
 
         $this->info('start retrieving follows list');
         $response = json_decode($instagram->getFollows($instagram->userid));
+
+        $counter = 0;
         while($response && $response->status == 'ok'){
 
             foreach($response->follows->nodes as $node){
@@ -38,7 +40,7 @@ class follows extends Command
                 $follow->created_at = new \DateTime();
                 $follow->save();
 
-                $this->info('Follows list updated : '. $node->id .' ['. $node->username .': '. $node->full_name .']');
+                $this->info((++$counter) . ') Follows list updated : '. $node->id .' ['. $node->username .': '. $node->full_name .']');
                 $count++;
             }
 

@@ -12,9 +12,13 @@ class flag_followers extends Command
 
     public function handle()
     {
+        DB::table('queues')->whereNotNull('followed_at')->update(['followed_at' => null]);
+        
         $followers = DB::table('followers')->get();
+
+        $counter = 0;
         foreach($followers as $follower){
-            $this->info('Flag follower : ' . $follower->id .' ['. $follower->username .']');
+            $this->info((++$counter) . ') Flag follower : ' . $follower->id .' ['. $follower->username .']');
             DB::table('queues')->where('id', $follower->id)->update(['followed_at' => new \DateTime()]);
         }
     }

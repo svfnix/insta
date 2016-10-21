@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\accept_request;
 use App\Console\Commands\clean;
 use App\Console\Commands\crawl;
 use App\Console\Commands\fetch;
@@ -9,7 +10,9 @@ use App\Console\Commands\flag_followers;
 use App\Console\Commands\followers;
 use App\Console\Commands\follows;
 use App\Console\Commands\like;
+use App\Console\Commands\login;
 use App\Console\Commands\send_request;
+use App\Console\Commands\send_request_live;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -21,12 +24,15 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        login::class,
         followers::class,
         follows::class,
         fetch::class,
         crawl::class,
         flag_followers::class,
         send_request::class,
+        send_request_live::class,
+        accept_request::class,
         clean::class,
         like::class
     ];
@@ -39,9 +45,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('insta:crawl')->hourly();
-        $schedule->command('insta:send_request')->everyMinute();
-        $schedule->command('insta:clean')->everyTenMinutes();
+        $schedule->command('insta:accept_request')->everyFiveMinutes();
+        //$schedule->command('insta:send_request_live')->everyMinute();
+        $schedule->command('insta:like')->everyFiveMinutes();
+        $schedule->command('insta:crawl')->everyFiveMinutes();
+        $schedule->command('insta:clean')->everyFiveMinutes();
     }
 
     /**

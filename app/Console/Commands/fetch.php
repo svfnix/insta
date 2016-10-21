@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class fetch extends Command
 {
 
-    protected $signature = 'instal:fetch {user}';
+    protected $signature = 'insta:fetch {user}';
     protected $description = 'Fetch instagram user';
 
     public function handle()

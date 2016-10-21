@@ -27,10 +27,6 @@ class crawl extends Command
             $this->info('Fetching user '.$user->id.' ['.$user->username.']');
 
             $instagram = new Instagram();
-            $response = json_decode($instagram->login());
-            if(!$response || !$response->authenticated){
-                $this->error('Login Failed!');
-            }
 
             DB::table('queues')->where('id',  $user->id)->update(['crawled_at' => new \DateTime()]);
 
@@ -39,11 +35,13 @@ class crawl extends Command
 
             $this->info('start retrieving user followers');
             $response = json_decode($instagram->getFollowers($user->id));
+
+            $counter = 0;
             while($response && $response->status == 'ok'){
 
                 foreach($response->followed_by->nodes as $node){
-                    if(DB::table('queues')->find($node->id)) {
-                        $this->error('User already exists '. $node->id .' ['. $node->username .': '. $node->full_name .']');
+                    if(DB::table('queues')->where('id', $node->id)->first()) {
+                        $this->error((++$counter) . ') User already exists '. $node->id .' ['. $node->username .': '. $node->full_name .']');
                     } else {
                         $queue = new Queue();
                         $queue->id = $node->id;
@@ -52,7 +50,7 @@ class crawl extends Command
                         $queue->cycle = $user->cycle + 1;
                         $queue->save();
 
-                        $this->info('Follower updated : ' . $node->id .' ['. $node->username .': '. $node->full_name .']');
+                        $this->info((++$counter) . ') Follower updated : ' . $node->id .' ['. $node->username .': '. $node->full_name .']');
                         $count++;
                     }
                 }

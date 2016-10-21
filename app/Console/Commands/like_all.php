@@ -7,15 +7,20 @@ use App\Queue;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-class like extends Command
+class like_all extends Command
 {
 
-    protected $signature = 'insta:like';
+    protected $signature = 'insta:like_all';
     protected $description = 'Like updates';
 
     public function handle()
     {
         $instagram = new Instagram();
+        $id = $instagram->getUserID($this->argument('user'));
+
+
+
+
         $nodes = $instagram->getUpdates();
 
         $counter = 0;
