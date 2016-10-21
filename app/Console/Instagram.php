@@ -13,17 +13,19 @@ class Instagram {
     public $username;
     private $password;
 
-    public $page_count = 100;
+    public $page_count_follow = 100;
+    public $page_count_stuff = 20;
 
     public function __construct()
     {
         $this->client = new \GuzzleHttp\Client();
         //$this->jar = new \GuzzleHttp\Cookie\CookieJar();
-        $this->jar = new FileCookieJar('storage/svfnix.jar');
+        $this->jar = new FileCookieJar('storage/'.env('INSTA_USERNAME', '_').'.jar');
 
         $this->username = env('INSTA_USERNAME', null);
         $this->password = env('INSTA_PASSWORD', null);
-        $this->userid = env('INSTA_USERID', null);
+
+        $this->fetchData();
 
     }
 
@@ -37,25 +39,37 @@ class Instagram {
         ]);
 
         preg_match('/\<script type=\"text\/javascript\"\>window\.\_sharedData \= (\{.*?\})\;\<\/script\>/Si', $response->getBody(), $matchs);
-        $this->data = json_decode($matchs[1]);
+        return json_decode($matchs[1]);
+    }
+
+    public function fetchData(){
+        $this->data = $this->fetch($this->route());
     }
 
     public function getCsrfToken(){
-
-        $this->fetch(
-            $this->route()
-        );
-
         return $this->data->config->csrf_token;
     }
 
-    public function getUserID($uname){
+    public function getUserID($uname=null){
 
-        $this->fetch(
+        if(is_null($uname)){
+            return $this->data->config->viewer->id;
+        }
+
+        $data = $this->fetch(
             $this->route("/{$uname}/")
         );
 
-        return $this->data->entry_data->ProfilePage[0]->user->id;
+        return $data->entry_data->ProfilePage[0]->user->id;
+    }
+
+    public function getUserUpdates($uname=null){
+        if(is_null($uname)){
+            return $this->data->entry_data->FeedPage[0]->feed->media->nodes;
+        }
+
+        $data = $this->fetch($this->route($uname));
+        return $data->entry_data->ProfilePage[0]->user->media->nodes;
     }
 
     public function query($path, $args=[], $method='POST'){
@@ -121,38 +135,43 @@ class Instagram {
     public function getFollowers($userid, $after=null){
 
         if($after){
-            $page_tpl = 'after('. $after .',+'. $this->page_count .')';
+             $func = 'after('. $after .',+'. $this->page_count_follow .')';
         } else {
-            $page_tpl = 'first('. $this->page_count .')';
+             $func = 'first('. $this->page_count_follow .')';
         }
 
         return $this->query(
             $this->route("/query/"), [
-            'q' => 'ig_user('. $userid .'){followed_by.'. $page_tpl .'{count,page_info{end_cursor,has_next_page},nodes{id,is_verified,followed_by_viewer,requested_by_viewer,full_name,profile_pic_url,username}}}',
+            'q' => 'ig_user('. $userid .'){followed_by.'.  $func .'{count,page_info{end_cursor,has_next_page},nodes{id,is_verified,followed_by_viewer,requested_by_viewer,full_name,profile_pic_url,username}}}',
         ])->getBody();
     }
 
     public function getFollows($userid, $after=null){
 
         if($after){
-            $page_tpl = 'after('. $after .',+'. $this->page_count .')';
+             $func = 'after('. $after .',+'. $this->page_count_follow .')';
         } else {
-            $page_tpl = 'first('. $this->page_count .')';
+             $func = 'first('. $this->page_count_follow .')';
         }
 
         return $this->query(
             $this->route("/query/"), [
-            'q' => 'ig_user('. $userid .'){follows.'. $page_tpl .'{count,page_info{end_cursor,has_next_page},nodes{id,is_verified,followed_by_viewer,requested_by_viewer,full_name,profile_pic_url,username}}}',
+            'q' => 'ig_user('. $userid .'){follows.'.  $func .'{count,page_info{end_cursor,has_next_page},nodes{id,is_verified,followed_by_viewer,requested_by_viewer,full_name,profile_pic_url,username}}}',
         ])->getBody();
     }
 
-    public function getUpdates(){
+    public function getUpdates($userid, $after=null){
 
-        $this->fetch(
-            $this->route()
-        );
+        if($after){
+             $func = 'after('. $after .',+'. $this->page_count_stuff .')';
+        } else {
+             $func = 'first('. $this->page_count_stuff .')';
+        }
 
-        return $this->data->entry_data->FeedPage[0]->feed->media->nodes;
+        return $this->query(
+            $this->route("/query/"), [
+            'q' => 'ig_user('. $userid .'){media.'.  $func .'{count,nodes{caption,code,comments{count},comments_disabled,date,dimensions{height,width},display_src,id,is_video,likes{count},owner{id},thumbnail_src,video_views},page_info}}'
+        ])->getBody();
     }
 
 }

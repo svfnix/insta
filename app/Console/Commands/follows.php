@@ -16,10 +16,6 @@ class follows extends Command
     public function handle()
     {
         $instagram = new Instagram();
-        $response = json_decode($instagram->login());
-        if(!$response || !$response->authenticated){
-            $this->error('Login Failed!');
-        }
 
         $count = 1;
         $page = 1;
@@ -28,7 +24,7 @@ class follows extends Command
         DB::table('follows')->truncate();
 
         $this->info('start retrieving follows list');
-        $response = json_decode($instagram->getFollows($instagram->userid));
+        $response = json_decode($instagram->getFollows($instagram->getUserID()));
 
         $counter = 0;
         while($response && $response->status == 'ok'){
@@ -48,8 +44,8 @@ class follows extends Command
                 break;
             }
 
-            $this->info('retrieving follows list - page '. ($page++) . ' of '. floor($response->follows->count / $instagram->page_count));
-            $response = json_decode($instagram->getFollows($instagram->userid, $response->follows->page_info->end_cursor));
+            $this->info('retrieving follows list - page '. ($page++) . ' of '. floor($response->follows->count / $instagram->page_count_follow));
+            $response = json_decode($instagram->getFollows($instagram->getUserID(), $response->follows->page_info->end_cursor));
         }
 
         $this->info($count . ' follows list updated.');

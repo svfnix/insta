@@ -10,6 +10,7 @@ use App\Console\Commands\flag_followers;
 use App\Console\Commands\followers;
 use App\Console\Commands\follows;
 use App\Console\Commands\like;
+use App\Console\Commands\like_all;
 use App\Console\Commands\login;
 use App\Console\Commands\send_request;
 use App\Console\Commands\send_request_live;
@@ -34,7 +35,8 @@ class Kernel extends ConsoleKernel
         send_request_live::class,
         accept_request::class,
         clean::class,
-        like::class
+        like::class,
+        like_all::class
     ];
 
     /**

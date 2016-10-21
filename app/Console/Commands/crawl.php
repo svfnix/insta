@@ -59,8 +59,8 @@ class crawl extends Command
                     break;
                 }
 
-                $this->info('retrieving followers - page '. ($page++) . ' of '. floor($response->followed_by->count / $instagram->page_count));
-                $response = json_decode($instagram->getFollowers($instagram->userid, $response->followed_by->page_info->end_cursor));
+                $this->info('retrieving followers - page '. ($page++) . ' of '. floor($response->followed_by->count / $instagram->page_count_follow));
+                $response = json_decode($instagram->getFollowers($instagram->getUserID(), $response->followed_by->page_info->end_cursor));
             }
 
             $this->info($count . ' follower updated.');

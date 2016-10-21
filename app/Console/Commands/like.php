@@ -16,7 +16,7 @@ class like extends Command
     public function handle()
     {
         $instagram = new Instagram();
-        $nodes = $instagram->getUpdates();
+        $nodes = $instagram->getUserUpdates();
 
         $counter = 0;
         foreach($nodes as $node){

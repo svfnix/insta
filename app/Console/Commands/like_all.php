@@ -10,27 +10,24 @@ use Illuminate\Support\Facades\DB;
 class like_all extends Command
 {
 
-    protected $signature = 'insta:like_all';
-    protected $description = 'Like updates';
+    protected $signature = 'insta:like_all {user}';
+    protected $description = 'Like user updates';
 
     public function handle()
     {
         $instagram = new Instagram();
-        $id = $instagram->getUserID($this->argument('user'));
 
-
-
-
-        $nodes = $instagram->getUpdates();
+        $nodes = json_decode(
+            $instagram->getUpdates(
+                $instagram->getUserID(
+                    $this->argument('user')
+                )
+        ));
 
         $counter = 0;
-        foreach($nodes as $node){
-            if($node->likes->viewer_has_liked == false){
-                $instagram->like($node->id);
-                $this->info((++$counter) . ') Update '. $node->id .' liked');
-            } else {
-                $this->error((++$counter) . ') Update '. $node->id .' liked previously');
-            }
+        foreach ($nodes as $node){
+            $instagram->like($node->id);
+            $this->info((++$counter) . ') Like post '. $node->id);
         }
     }
 }

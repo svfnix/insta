@@ -16,10 +16,6 @@ class fetch extends Command
     public function handle()
     {
         $instagram = new Instagram();
-        $response = json_decode($instagram->login());
-        if(!$response || !$response->authenticated){
-            $this->error('Login Failed!');
-        }
 
         $this->info('fetch user');
         $id = $instagram->getUserID($this->argument('user'));

@@ -15,11 +15,7 @@ class followers extends Command
     public function handle()
     {
         $instagram = new Instagram();
-        $response = json_decode($instagram->login());
-        if(!$response || !$response->authenticated){
-            $this->error('Login Failed!');
-        }
-
+ 
         $count = 1;
         $page = 1;
 
@@ -27,7 +23,7 @@ class followers extends Command
         DB::table('followers')->truncate();
 
         $this->info('start retrieving followers');
-        $response = json_decode($instagram->getFollowers($instagram->userid));
+        $response = json_decode($instagram->getFollowers($instagram->getUserID()));
 
         $counter = 0;
         while($response && $response->status == 'ok'){
@@ -47,8 +43,8 @@ class followers extends Command
                 break;
             }
 
-            $this->info('retrieving followers - page '. ($page++) . ' of '. floor($response->followed_by->count / $instagram->page_count));
-            $response = json_decode($instagram->getFollowers($instagram->userid, $response->followed_by->page_info->end_cursor));
+            $this->info('retrieving followers - page '. ($page++) . ' of '. floor($response->followed_by->count / $instagram->page_count_follow));
+            $response = json_decode($instagram->getFollowers($instagram->getUserID(), $response->followed_by->page_info->end_cursor));
         }
 
         $this->info($count . ' follower updated.');

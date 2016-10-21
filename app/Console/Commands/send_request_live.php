@@ -21,11 +21,11 @@ class send_request_live extends Command
         $this->info('Start following likers');
 
         $instagram = new Instagram();
-        $nodes = $instagram->getUpdates();
+        $nodes = $instagram->getUserUpdates();
         foreach($nodes as $node){
             if($node->likes->count){
                 foreach ($node->likes->nodes as $like){
-                    if($like->user->id != $instagram->userid){
+                    if($like->user->id != $instagram->getUserID()){
                         $user = DB::table('queues')->where('id', $like->user->id)->first();
                         if($user){
                             if(is_null($user->followed_at)){
