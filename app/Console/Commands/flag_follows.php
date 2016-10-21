@@ -24,11 +24,11 @@ class flag_follows extends Command
         foreach($follows as $follow){
 
             if(DB::table('queues')->where('id', $follow->id)->first()) {
-                $this->info((++$counter) . ') Follow was exist and updated : ' . $follow->id .' ['. $follow->username .']');
+                $this->info((++$counter) . ') Follow exists and will be updated : ' . $follow->id .' ['. $follow->username .']');
                 DB::table('queues')->where('id', $follow->id)->update(['followed_at' => new \DateTime()]);
             } else {
 
-                $this->warn((++$counter) . ') Follow not exist and will be added : ' . $follow->id .' ['. $follow->username .']');
+                $this->warn((++$counter) . ') Follow not exists sand will be added : ' . $follow->id .' ['. $follow->username .']');
                 
                 $queue = new Queue();
                 $queue->id = $follow->id;
