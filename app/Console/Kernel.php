@@ -6,7 +6,7 @@ use App\Console\Commands\accept_request;
 use App\Console\Commands\clean;
 use App\Console\Commands\crawl;
 use App\Console\Commands\fetch;
-use App\Console\Commands\flag_followers;
+use App\Console\Commands\flag_follows;
 use App\Console\Commands\followers;
 use App\Console\Commands\follows;
 use App\Console\Commands\like;
@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
         follows::class,
         fetch::class,
         crawl::class,
-        flag_followers::class,
+        flag_follows::class,
         send_request::class,
         send_request_live::class,
         accept_request::class,
