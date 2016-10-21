@@ -41,7 +41,7 @@ class crawl extends Command
 
                 foreach($response->followed_by->nodes as $node){
                     if(DB::table('queues')->where('id', $node->id)->first()) {
-                        $this->error((++$counter) . ') User already exists '. $node->id .' ['. $node->username .': '. $node->full_name .']');
+                        $this->warn((++$counter) . ') User already exists '. $node->id .' ['. $node->username .': '. $node->full_name .']');
                     } else {
                         $queue = new Queue();
                         $queue->id = $node->id;

@@ -24,7 +24,7 @@ class like extends Command
                 $instagram->like($node->id);
                 $this->info((++$counter) . ') Update '. $node->id .' liked');
             } else {
-                $this->error((++$counter) . ') Update '. $node->id .' liked previously');
+                $this->warn((++$counter) . ') Update '. $node->id .' liked previously');
             }
         }
     }

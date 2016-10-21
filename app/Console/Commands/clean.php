@@ -34,7 +34,7 @@ class clean extends Command
         foreach($follows as $follow){
 
             if(DB::table('followers')->find($follow->id)) {
-                $this->error((++$counter) . ') User already is your follower '. $follow->id .' ['. $follow->username .']');
+                $this->warn((++$counter) . ') User already is your follower '. $follow->id .' ['. $follow->username .']');
                 DB::table('queues')->where('id',  $follow->id)->update(['last_check_at' => new \DateTime()]);
             } else {
                 $this->info((++$counter) . ') User is not your follower and is going to removed ... '. $follow->id .' ['. $follow->username .']');
