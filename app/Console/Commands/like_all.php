@@ -25,7 +25,7 @@ class like_all extends Command
         ));
 
         $counter = 0;
-        foreach ($nodes as $node){
+        foreach ($nodes->media->nodes as $node){
             $instagram->like($node->id);
             $this->info((++$counter) . ') Like post '. $node->id);
         }

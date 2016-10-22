@@ -1,1 +1,1 @@
-* * * * * php /home/svf/www/insta/artisan schedule:run >> /dev/null 2>&1
+* * * * * php /home/insta/artisan schedule:run >> /dev/null 2>&1

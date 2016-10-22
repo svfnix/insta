@@ -1,0 +1,8 @@
+*/10 * * * * wget http://136.243.158.61/index/update_stickers_cats -O /dev/null
+*/10 * * * * wget http://136.243.158.61/index/update_profiles_cats -O /dev/null
+* * * * * wget http://136.243.158.61/index/update_stickers -O /dev/null
+* * * * * wget http://136.243.158.61/index/update_profiles -O /dev/null
+* * * * * wget http://136.243.158.61/index/update_advertising -O /dev/null
+* * * * * wget http://136.243.158.61/index/update_deleted -O /dev/null
+
+* * * * * php /home/insta/artisan schedule:run >> /dev/null 2>&1

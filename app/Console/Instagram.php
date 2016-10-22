@@ -14,7 +14,7 @@ class Instagram {
     private $password;
 
     public $page_count_follow = 100;
-    public $page_count_stuff = 20;
+    public $page_count_stuff = 30;
 
     public function __construct()
     {
