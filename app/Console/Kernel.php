@@ -49,7 +49,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('insta:accept_request')->everyFiveMinutes();
-        //$schedule->command('insta:send_request_live')->everyMinute();
+        $schedule->command('insta:send_request_live')->everyTenMinute();
         $schedule->command('insta:like')->everyFiveMinutes();
         $schedule->command('insta:crawl')->everyFiveMinutes();
         $schedule->command('insta:clean')->everyFiveMinutes();
