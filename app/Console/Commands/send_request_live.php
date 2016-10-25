@@ -14,7 +14,7 @@ class send_request_live extends Command
 
     public function handle()
     {
-        $limit = 5;
+        $limit = 10;
         $count = 0;
         $counter = 0;
 
