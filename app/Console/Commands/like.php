@@ -18,11 +18,18 @@ class like extends Command
         $instagram = new Instagram();
         $nodes = $instagram->getUserUpdates();
 
+        $count = 0;
+        $limit = 15;
         $counter = 0;
         foreach($nodes as $node){
             if($node->likes->viewer_has_liked == false){
-                $instagram->like($node->id);
                 $this->info((++$counter) . ') Update '. $node->id .' liked');
+                $instagram->like($node->id);
+                $count++;
+
+                if($count >= $limit){
+                    return;
+                }
             } else {
                 $this->warn((++$counter) . ') Update '. $node->id .' liked previously');
             }
