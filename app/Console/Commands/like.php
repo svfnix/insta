@@ -19,7 +19,7 @@ class like extends Command
         $nodes = $instagram->getUserUpdates();
 
         $count = 0;
-        $limit = 15;
+        $limit = 9;
         $counter = 0;
         foreach($nodes as $node){
             if($node->likes->viewer_has_liked == false){
