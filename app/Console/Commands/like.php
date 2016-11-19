@@ -6,6 +6,7 @@ use App\Console\Instagram;
 use App\Queue;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Mockery\CountValidator\Exception;
 
 class like extends Command
 {
@@ -34,11 +35,14 @@ class like extends Command
         foreach($nodes as $node){
             if($node->likes->viewer_has_liked == false){
                 $this->info((++$counter) . ') Update '. $node->id .' liked');
-                $response = $instagram->like($node->id)->getBody();
-
-                if(substr($response, 0, 62) == 'It looks like you were misusing this feature by going too fast'){
-                    file_put_contents('like.lock', time() + 1800);
-                    return false;
+                
+                try{
+                    $instagram->like($node->id)->getBody();
+                } catch (RequestException $e) {
+                    if ($e->getResponse()->getStatusCode() == '400') {
+                        file_put_contents('like.lock', time() + 1800);
+                        return false;
+                    }
                 }
 
                 $count++;
