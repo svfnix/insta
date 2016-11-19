@@ -15,6 +15,16 @@ class like extends Command
 
     public function handle()
     {
+
+        if(file_exists('like.lock')){
+            $time = file_get_contents('like.lock');
+            if($time < time()){
+                unlink('like.lock');
+            } else {
+                return false;
+            }
+        }
+
         $instagram = new Instagram();
         $nodes = $instagram->getUserUpdates();
 
@@ -24,7 +34,13 @@ class like extends Command
         foreach($nodes as $node){
             if($node->likes->viewer_has_liked == false){
                 $this->info((++$counter) . ') Update '. $node->id .' liked');
-                $instagram->like($node->id);
+                $response = $instagram->like($node->id)->getBody();
+
+                if(substr($response, 0, 62) == 'It looks like you were misusing this feature by going too fast'){
+                    file_put_contents('like.lock', time() + 1800);
+                    return false;
+                }
+
                 $count++;
 
                 if($count >= $limit){

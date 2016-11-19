@@ -1,7 +1,7 @@
 /node_modules
 /public/storage
 /storage/logs/laravel.log
-/storage/*.jar
+/storage/sessions/*.jar
 /vendor
 /.idea
 .env

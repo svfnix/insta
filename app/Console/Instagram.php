@@ -16,17 +16,16 @@ class Instagram {
     public $page_count_follow = 100;
     public $page_count_stuff = 30;
 
-    public function __construct()
+    public function __construct($uname=null, $password=null)
     {
+        $this->username = is_null($uname) ? env('INSTA_USERNAME', '_') : $uname;
+        $this->password = is_null($password) ? env('INSTA_PASSWORD', null) : $password;
+
         $this->client = new \GuzzleHttp\Client();
         //$this->jar = new \GuzzleHttp\Cookie\CookieJar();
-        $this->jar = new FileCookieJar('storage/'.env('INSTA_USERNAME', '_').'.jar');
-
-        $this->username = env('INSTA_USERNAME', null);
-        $this->password = env('INSTA_PASSWORD', null);
+        $this->jar = new FileCookieJar('storage/sessions/' . $this->username . '.jar');
 
         $this->fetchData();
-
     }
 
     public function route($path=null){
@@ -90,7 +89,33 @@ class Instagram {
             'X-Requested-With' => 'XMLHttpRequest',
             'Referer' => 'https://www.instagram.com/'
         ];
+
         return $this->client->request($method, $path, $args);
+    }
+
+    public function signup(){
+
+        $result = json_decode(
+            $this->query(
+                $this->route("/accounts/web_create_ajax/attempt/"), [
+                'email' => $this->username . '@mizbanan.com',
+                'username' => $this->username,
+                'password' => $this->password,
+                'first_name' => $this->username,
+            ])->getBody()
+        );
+
+        if($result->dryrun_passed){
+            return $this->query(
+                $this->route("/accounts/web_create_ajax/"), [
+                    'email' => $this->username . '@mizbanan.com',
+                    'username' => $this->username,
+                    'password' => $this->password,
+                    'first_name' => $this->username,
+                ])->getBody();
+        }
+
+        return false;
     }
 
     public function login(){
