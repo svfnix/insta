@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Console\Instagram;
 use App\Queue;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
