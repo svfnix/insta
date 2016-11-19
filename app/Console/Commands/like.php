@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Console\Instagram;
 use App\Queue;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Mockery\CountValidator\Exception;
@@ -35,7 +36,7 @@ class like extends Command
         foreach($nodes as $node){
             if($node->likes->viewer_has_liked == false){
                 $this->info((++$counter) . ') Update '. $node->id .' liked');
-                
+
                 try{
                     $instagram->like($node->id)->getBody();
                 } catch (RequestException $e) {
