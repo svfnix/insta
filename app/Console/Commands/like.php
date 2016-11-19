@@ -23,6 +23,7 @@ class like extends Command
             if($time < time()){
                 unlink('like.lock');
             } else {
+                $this->warn('please wait '.($time - time()).'seconds untill unlocked.');
                 return false;
             }
         }
@@ -42,6 +43,7 @@ class like extends Command
                 } catch (RequestException $e) {
                     if ($e->getResponse()->getStatusCode() == '400') {
                         file_put_contents('like.lock', time() + 1800);
+                        $this->error('your account has been locked ...');
                         return false;
                     }
                 }
