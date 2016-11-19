@@ -34,27 +34,25 @@ class like extends Command
         $count = 0;
         $limit = 9;
         $counter = 0;
-        foreach($nodes as $node){
-            if($node->likes->viewer_has_liked == false){
-                $this->info((++$counter) . ') Update '. $node->id .' liked');
-
-                try{
+        try{
+            foreach($nodes as $node){
+                if($node->likes->viewer_has_liked == false){
+                    $this->info((++$counter) . ') Update '. $node->id .' liked');
                     $instagram->like($node->id)->getBody();
-                } catch (RequestException $e) {
-                    if ($e->getResponse()->getStatusCode() == '400') {
-                        file_put_contents('like.lock', time() + 1800);
-                        $this->error('your account has been locked ...');
-                        return false;
+
+                    $count++;
+                    if($count >= $limit){
+                        return;
                     }
+                } else {
+                    $this->warn((++$counter) . ') Update '. $node->id .' liked previously');
                 }
-
-                $count++;
-
-                if($count >= $limit){
-                    return;
-                }
-            } else {
-                $this->warn((++$counter) . ') Update '. $node->id .' liked previously');
+            }
+        } catch (RequestException $e) {
+            if ($e->getResponse()->getStatusCode() == '400') {
+                file_put_contents('like.lock', time() + 1800);
+                $this->error('your account has been locked ...');
+                return false;
             }
         }
     }
