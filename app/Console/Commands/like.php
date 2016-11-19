@@ -23,7 +23,7 @@ class like extends Command
             if($time < time()){
                 unlink('like.lock');
             } else {
-                $this->warn('please wait '.($time - time()).'seconds untill unlocked.');
+                $this->warn('please wait '.($time - time()).' seconds for unlocking.');
                 return false;
             }
         }
