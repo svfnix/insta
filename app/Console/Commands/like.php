@@ -32,7 +32,7 @@ class like extends Command
         $nodes = $instagram->getUserUpdates();
 
         $count = 0;
-        $limit = 2;
+        $limit = 1;
         $limit2 = 5;
         $counter = 0;
         try{
@@ -48,6 +48,8 @@ class like extends Command
                     }
                 } elseif ($count < $limit2) {
                     $instagram->comment($node->id, '👍');
+                    $count++;
+                    $this->info((++$counter) . ') Update ' . $node->id . ' commented');
                     sleep(10);
                 } else {
                     return true;
