@@ -32,13 +32,14 @@ class like extends Command
         $nodes = $instagram->getUserUpdates();
 
         $count = 0;
-        $limit = 9;
+        $limit = 2;
         $counter = 0;
         try{
             foreach($nodes as $node){
                 if($node->likes->viewer_has_liked == false){
                     $this->info((++$counter) . ') Update '. $node->id .' liked');
                     $instagram->like($node->id)->getBody();
+		    sleep(30);
 
                     $count++;
                     if($count >= $limit){
@@ -50,7 +51,7 @@ class like extends Command
             }
         } catch (RequestException $e) {
             if ($e->getResponse()->getStatusCode() == '400') {
-                file_put_contents('like.lock', time() + 1800);
+                //file_put_contents('like.lock', time() + 120);
                 $this->error('your account has been locked ...');
                 return false;
             }

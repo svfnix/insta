@@ -26,7 +26,7 @@ class send_request_live extends Command
             }
         }
 
-        $limit = 8;
+        $limit = 4;
         $count = 0;
         $counter = 0;
 
@@ -45,6 +45,7 @@ class send_request_live extends Command
                                     $this->info((++$counter) . ') Follow liker/user : ' . $user->id . ' [' . $user->username . ']');
                                     DB::table('queues')->where('id', $user->id)->update(['followed_at' => new \DateTime()]);
                                     $instagram->follow($user->id);
+				    sleep(30);
                                     $count++;
                                 }
                             } else {
@@ -59,6 +60,7 @@ class send_request_live extends Command
                                 $queue->save();
 
                                 $instagram->follow($like->user->id);
+				sleep(30);
                                 $count++;
                             }
 
@@ -71,7 +73,7 @@ class send_request_live extends Command
             }
         } catch (RequestException $e) {
             if ($e->getResponse()->getStatusCode() == '400') {
-                file_put_contents('follow.lock', time() + 1800);
+                //file_put_contents('follow.lock', time() + 60);
                 $this->error('your account has been locked ...');
                 return false;
             }
