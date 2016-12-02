@@ -33,11 +33,11 @@ class like extends Command
 
         $count = 0;
         $limit = 1;
-        $limit2 = 5;
+        $limit2 = 3;
         $counter = 0;
         try{
             foreach($nodes as $node) {
-                /*if ($count < $limit) {
+                if ($count < $limit) {
                     if ($node->likes->viewer_has_liked == false) {
                         $this->info((++$counter) . ') Update ' . $node->id . ' liked');
                         $instagram->like($node->id)->getBody();
@@ -46,8 +46,7 @@ class like extends Command
                     } else {
                         $this->warn((++$counter) . ') Update ' . $node->id . ' liked previously');
                     }
-                } else*/
-                    if ($count < $limit2) {
+                } elseif ($count < $limit2) {
                     $instagram->comment($node->id, '👍');
                     $count++;
                     $this->info((++$counter) . ') Update ' . $node->id . ' commented');
