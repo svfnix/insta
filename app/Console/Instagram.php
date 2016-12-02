@@ -149,6 +149,12 @@ class Instagram {
         return $this->query($this->route("/web/likes/{$id}/unlike/"));
     }
 
+    public function comment($id, $text){
+        return $this->query($this->route("/web/comments/{$id}/add/"), [
+            'comment_text' => $text
+        ]);
+    }
+
     public function accept($id){
         return $this->query($this->route("/web/friendships/{$id}/approve/"));
     }

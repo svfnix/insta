@@ -33,20 +33,24 @@ class like extends Command
 
         $count = 0;
         $limit = 2;
+        $limit2 = 5;
         $counter = 0;
         try{
-            foreach($nodes as $node){
-                if($node->likes->viewer_has_liked == false){
-                    $this->info((++$counter) . ') Update '. $node->id .' liked');
-                    $instagram->like($node->id)->getBody();
-		    sleep(30);
-
-                    $count++;
-                    if($count >= $limit){
-                        return;
+            foreach($nodes as $node) {
+                if ($count < $limit) {
+                    if ($node->likes->viewer_has_liked == false) {
+                        $this->info((++$counter) . ') Update ' . $node->id . ' liked');
+                        $instagram->like($node->id)->getBody();
+                        $count++;
+                        sleep(10);
+                    } else {
+                        $this->warn((++$counter) . ') Update ' . $node->id . ' liked previously');
                     }
+                } elseif ($count < $limit2) {
+                    $instagram->comment($node->id, '👍');
+                    sleep(10);
                 } else {
-                    $this->warn((++$counter) . ') Update '. $node->id .' liked previously');
+                    return true;
                 }
             }
         } catch (RequestException $e) {
