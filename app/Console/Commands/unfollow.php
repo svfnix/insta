@@ -29,7 +29,6 @@ class unfollow extends Command
             $instagram->unfollow($friend->id);
             $this->info((++$counter) . ') Unfollow user : ' . $friend->id . ' [' . $friend->username . ']');
             DB::table('queues')->where('id',  $friend->id)->update(['unfollowed_at' => new \DateTime()]);
-            sleep(30);
         }
 
     }

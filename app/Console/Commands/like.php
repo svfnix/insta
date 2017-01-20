@@ -42,7 +42,6 @@ class like extends Command
                         $this->info((++$counter) . ') Update ' . $node->id . ' liked');
                         $instagram->like($node->id)->getBody();
                         $count++;
-                        sleep(10);
                     } else {
                         $this->warn((++$counter) . ') Update ' . $node->id . ' liked previously');
                     }
@@ -50,7 +49,6 @@ class like extends Command
                     $instagram->comment($node->id, '👍');
                     $count++;
                     $this->info((++$counter) . ') Update ' . $node->id . ' commented');
-                    sleep(10);
                 } else {
                     return true;
                 }

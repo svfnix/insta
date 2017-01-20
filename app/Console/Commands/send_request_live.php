@@ -45,7 +45,6 @@ class send_request_live extends Command
                                     $this->info((++$counter) . ') Follow liker/user : ' . $user->id . ' [' . $user->username . ']');
                                     DB::table('queues')->where('id', $user->id)->update(['followed_at' => new \DateTime()]);
                                     $instagram->follow($user->id);
-				                    sleep(30);
                                     $count++;
                                 }
                             } else {
@@ -60,7 +59,6 @@ class send_request_live extends Command
                                 $queue->save();
 
                                 $instagram->follow($like->user->id);
-                                sleep(30);
                                 $count++;
                             }
 
