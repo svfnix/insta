@@ -14,6 +14,7 @@ use App\Console\Commands\like_all;
 use App\Console\Commands\login;
 use App\Console\Commands\send_request;
 use App\Console\Commands\send_request_live;
+use App\Console\Commands\unfollow;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -62,11 +63,12 @@ class Kernel extends ConsoleKernel
 
 
         $schedule->command('insta:accept_request')->everyFiveMinutes();
-        $schedule->command('insta:send_request_live')->everyFiveMinutes();
+        $schedule->command('insta:send_request_live')->everyTenMinutes();
         $schedule->command('insta:unfollow')->everyFiveMinutes();
         $schedule->command('insta:like')->everyMinute();
         //$schedule->command('insta:crawl')->everyFiveMinutes();
         $schedule->command('insta:clean')->everyFiveMinutes();
+
     }
 
     /**
