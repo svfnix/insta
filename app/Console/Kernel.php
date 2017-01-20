@@ -49,6 +49,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        /*
+
+            $h = date('H');
+            if(($h > 23) || ($h < 5)){
+                return true;
+            }
+            if(($h > 10) && ($h < 15)){
+                        return true;
+            }
+        */
+
+
         $schedule->command('insta:accept_request')->everyFiveMinutes();
         $schedule->command('insta:send_request_live')->everyFiveMinutes();
         $schedule->command('insta:unfollow')->everyFiveMinutes();
