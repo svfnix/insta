@@ -37,7 +37,8 @@ class Kernel extends ConsoleKernel
         accept_request::class,
         clean::class,
         like::class,
-        like_all::class
+        like_all::class,
+        unfollow::class
     ];
 
     /**
@@ -49,8 +50,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('insta:accept_request')->everyFiveMinutes();
-	$schedule->command('insta:send_request_live')->everyFiveMinutes();
-	$schedule->command('insta:like')->everyMinute();
+        $schedule->command('insta:send_request_live')->everyFiveMinutes();
+        $schedule->command('insta:unfollow')->everyFiveMinutes();
+        $schedule->command('insta:like')->everyMinute();
         //$schedule->command('insta:crawl')->everyFiveMinutes();
         $schedule->command('insta:clean')->everyFiveMinutes();
     }
