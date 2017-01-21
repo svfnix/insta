@@ -19,16 +19,19 @@ class unfollow extends Command
         $instagram = new Instagram();
 
         $friends = DB::table('queues')
-            ->whereNull('unfollowed_at')
-            ->orderBy('id', 'asc')
+            ->orderBy('unfollowed_at', 'asc')
             ->take(5)
             ->get();
 
         $this->info('Start unfollowing friends');
         foreach ($friends as $friend){
-            $instagram->unfollow($friend->id);
-            $this->info((++$counter) . ') Unfollow user : ' . $friend->id . ' [' . $friend->username . ']');
-            DB::table('queues')->where('id',  $friend->id)->update(['unfollowed_at' => new \DateTime()]);
+            try {
+                DB::table('queues')->where('id', $friend->id)->update(['unfollowed_at' => new \DateTime()]);
+                $instagram->unfollow($friend->id);
+                $this->info((++$counter) . ') Unfollow user : ' . $friend->id . ' [' . $friend->username . ']');
+            } catch (RequestException $e) {
+
+            }
         }
 
     }
