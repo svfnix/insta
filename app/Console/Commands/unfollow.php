@@ -31,7 +31,7 @@ class unfollow extends Command
                 $instagram->unfollow($friend->id);
                 $this->info((++$counter) . ') Unfollow user : ' . $friend->id . ' [' . $friend->username . ']');
             } catch (RequestException $e) {
-
+                $this->info($e->getMessage());
             }
         }
 
