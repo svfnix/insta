@@ -28,7 +28,7 @@ class unfollow extends Command
         foreach ($friends as $friend){
             try {
                 DB::table('queues')->where('id', $friend->id)->update(['unfollowed_at' => new \DateTime()]);
-                $instagram->unfollow($friend->id);
+                $this->info($instagram->unfollow($friend->id));
                 $this->info((++$counter) . ') Unfollow user : ' . $friend->id . ' [' . $friend->username . ']');
             } catch (RequestException $e) {
                 $this->info($e->getMessage());
