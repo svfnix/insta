@@ -71,7 +71,7 @@ class Instagram {
         return $data->entry_data->ProfilePage[0]->user->media->nodes;
     }
 
-    public function query($path, $args=[], $method='POST'){
+    public function query($path, $args=[], $method='POST', $referrer='https://www.instagram.com/'){
 
         if(!is_array($args)){
             $args = [];
@@ -87,35 +87,10 @@ class Instagram {
             'X-CSRFToken' => $this->getCsrfToken(),
             'X-Instagram-AJAX' => '1',
             'X-Requested-With' => 'XMLHttpRequest',
-            'Referer' => 'https://www.instagram.com/'
+            'Referer' => $referrer
         ];
 
         return $this->client->request($method, $path, $args);
-    }
-
-    public function signup(){
-
-        $result = json_decode(
-            $this->query(
-                $this->route("/accounts/web_create_ajax/attempt/"), [
-                'email' => $this->username . '@mizbanan.com',
-                'username' => $this->username,
-                'password' => $this->password,
-                'first_name' => $this->username,
-            ])->getBody()
-        );
-
-        if($result->dryrun_passed){
-            return $this->query(
-                $this->route("/accounts/web_create_ajax/"), [
-                    'email' => $this->username . '@mizbanan.com',
-                    'username' => $this->username,
-                    'password' => $this->password,
-                    'first_name' => $this->username,
-                ])->getBody();
-        }
-
-        return false;
     }
 
     public function login(){
@@ -138,7 +113,12 @@ class Instagram {
     }
 
     public function unfollow($id){
-        return $this->query($this->route("/web/friendships/{$id}/unfollow/"));
+        return $this->query($this->route(
+            "/web/friendships/{$id}/unfollow/",
+            [],
+            'POST',
+            'https://www.instagram.com/'.$this->username.'/following/'
+        ));
     }
 
     public function like($id){
