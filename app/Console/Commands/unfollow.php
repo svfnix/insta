@@ -20,6 +20,7 @@ class unfollow extends Command
 
         $friends = DB::table('queues')
             ->orderBy('unfollowed_at', 'asc')
+            ->orderBy('followed_at', 'asc')
             ->take(5)
             ->get();
 
