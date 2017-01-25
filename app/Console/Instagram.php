@@ -86,11 +86,12 @@ class Instagram {
             'User-Agent' => 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0',
             'X-CSRFToken' => $this->getCsrfToken(),
             'X-Instagram-AJAX' => '1',
+            'Content-Type' => 'application/x-www-form-urlencoded',
             'X-Requested-With' => 'XMLHttpRequest',
             'Referer' => $referrer
         ];
-        print_r($args);
-        //return $this->client->request($method, $path, $args);
+
+        return $this->client->request($method, $path, $args);
     }
 
     public function login(){
@@ -113,12 +114,12 @@ class Instagram {
     }
 
     public function unfollow($id){
-        return $this->query($this->route(
-            "/web/friendships/{$id}/unfollow/",
+        return $this->query(
+            $this->route("/web/friendships/{$id}/unfollow/"),
             [],
             'POST',
-            'https://www.instagram.com/'.$this->username.'/following/'
-        ));
+            $this->route('/'.$this->username.'/following/')
+        );
     }
 
     public function like($id){
