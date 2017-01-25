@@ -21,7 +21,7 @@ class unfollow extends Command
         $friends = DB::table('queues')
             ->orderBy('unfollowed_at', 'asc')
             ->orderBy('followed_at', 'asc')
-            ->take(1)
+            ->take(10)
             ->get();
 
         $this->info('Start unfollowing friends');
