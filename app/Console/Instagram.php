@@ -89,8 +89,8 @@ class Instagram {
             'X-Requested-With' => 'XMLHttpRequest',
             'Referer' => $referrer
         ];
-
-        return $this->client->request($method, $path, $args);
+        print_r($args);
+        //return $this->client->request($method, $path, $args);
     }
 
     public function login(){
