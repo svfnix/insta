@@ -64,7 +64,7 @@ class Instagram {
 
     public function getUserUpdates($uname=null){
         if(is_null($uname)){
-            return $this->data->entry_data->FeedPage[0]->feed->media->nodes;
+            return $this->data->entry_data->FeedPage[0]->graphql->user->edge_web_feed_timeline->edges;
         }
 
         $data = $this->fetch($this->route($uname));
@@ -146,16 +146,9 @@ class Instagram {
 
     public function getFollowers($userid, $after=null){
 
-        if($after){
-             $func = 'after('. $after .',+'. $this->page_count_follow .')';
-        } else {
-             $func = 'first('. $this->page_count_follow .')';
-        }
-
         return $this->query(
-            $this->route("/query/"), [
-            'q' => 'ig_user('. $userid .'){followed_by.'.  $func .'{count,page_info{end_cursor,has_next_page},nodes{id,is_verified,followed_by_viewer,requested_by_viewer,full_name,profile_pic_url,username}}}',
-        ])->getBody();
+            $this->route('/graphql/query/?query_id=17851374694183129&variables={"id":"485981610","first":100'.($after ? ',"after":"'.$after.'"' : '').'}')
+            [], 'GET')->getBody();
     }
 
     public function getFollows($userid, $after=null){

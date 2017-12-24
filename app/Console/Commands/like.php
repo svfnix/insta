@@ -32,23 +32,20 @@ class like extends Command
         $nodes = $instagram->getUserUpdates();
 
         $count = 0;
-        $limit = 1;
-        $limit2 = 3;
-        $counter = 0;
         try{
             foreach($nodes as $node) {
-                if ($count < $limit) {
-                    if ($node->likes->viewer_has_liked == false) {
-                        $this->info((++$counter) . ') Update ' . $node->id . ' liked');
-                        $instagram->like($node->id)->getBody();
+                if ($count < 5) {
+                    if ($node->node->viewer_has_liked == false) {
+                        $this->info(($count) . ') Update ' . $node->node->id . ' liked');
+                        $instagram->like($node->node->id)->getBody();
                         $count++;
                     } else {
-                        $this->warn((++$counter) . ') Update ' . $node->id . ' liked previously');
+                        $this->warn('* ) Update ' . $node->node->id . ' liked previously');
                     }
-                } elseif ($count < $limit2) {
-                    $instagram->comment($node->id, '👍');
+                } elseif ($count < 10) {
+                    $instagram->comment($node->node->id, '👍');
                     $count++;
-                    $this->info((++$counter) . ') Update ' . $node->id . ' commented');
+                    $this->info(($count) . ') Update ' . $node->node->id . ' commented');
                 } else {
                     return true;
                 }
