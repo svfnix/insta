@@ -50,7 +50,7 @@ class Kernel extends ConsoleKernel
     {
         //$schedule->command('insta:accept_request')->everyFiveHours();
         //$schedule->command('insta:unfollow')->everyFiveMinutes();
-        $schedule->command('insta:like')->everyMinute();
+        $schedule->command('insta:like')->everyFiveMinutes();
         //$schedule->command('insta:crawl')->everyFiveMinutes();
         //$schedule->command('insta:clean')->everyFiveMinutes();
 
